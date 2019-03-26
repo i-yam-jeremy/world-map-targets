@@ -62,10 +62,35 @@ class TargetArrowOverlay extends Overlay
     if (plugin.getCurrentDestination() != null) {
       WorldPoint point = client.getLocalPlayer().getWorldLocation();
       WorldPoint destination = plugin.getCurrentDestination().getWorldPoint();
-      int dx = destination.getX() - point.getY();
+      int dx = destination.getX() - point.getX();
       int dy = destination.getY() - point.getY();
-      double angle = Math.atan(((double)dy)/dx);
-      BufferedImage rotatedImage = ImageUtil.rotateImage(ARROW_ICON, angle);
+      double angle = Math.atan(Math.abs(((double)dy)/dx));
+      if (dx == 0) {
+        if (dy > 0) {
+          angle = Math.PI/2.0;
+        }
+        else {
+          angle = 3.0*Math.PI/2.0;
+        }
+      }
+      else if (dy == 0) {
+        if (dx > 0) {
+          angle = 0.0;
+        }
+        else {
+          angle = Math.PI;
+        }
+      }
+      else if (dx < 0 && dy > 0) {
+        angle = Math.PI - angle;
+      }
+      else if (dx < 0 && dy < 0) {
+        angle += Math.PI;
+      }
+      else if (dx > 0 && dy < 0) {
+        angle = 2.0*Math.PI - angle;
+      }
+      BufferedImage rotatedImage = ImageUtil.rotateImage(ARROW_ICON, 2.0*Math.PI-angle);
       graphics.drawImage(rotatedImage, 100, 100, null);
     }
     /*Widget minimap = client.getWidget(WidgetInfo.MINIMAP_WORLDMAP_ORB);

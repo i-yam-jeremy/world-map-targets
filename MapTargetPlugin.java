@@ -127,6 +127,7 @@ public class MapTargetPlugin extends Plugin implements MouseListener
 
 	private WorldMapPoint currentDestination;
 
+
 	@Override
 	public void startUp()
 	{
@@ -203,7 +204,7 @@ public class MapTargetPlugin extends Plugin implements MouseListener
 	}
 
 	public MouseEvent mousePressed(MouseEvent mouseEvent) {
-		//if (SwingUtilities.isRightMouseButton(mouseEvent)) {
+		if (mouseEvent.isShiftDown()) {
 			Widget worldMap = client.getWidget(WidgetInfo.WORLD_MAP_VIEW);
 
 			if (worldMap != null) {
@@ -258,7 +259,7 @@ public class MapTargetPlugin extends Plugin implements MouseListener
 				System.out.println("(" + worldMap.getRelativeX() + ", " + worldMap.getRelativeY() + ")");
 				//System.out.println("scroll: (" + worldMap.getScrollX() + ", " + worldMap.getScrollY() + ")");*/
 			}
-		//}
+		}
 
 		return mouseEvent;
 	}
