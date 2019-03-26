@@ -35,6 +35,8 @@ import net.runelite.api.coords.WorldPoint;
 import java.awt.image.BufferedImage;
 import net.runelite.client.util.ImageUtil;
 import net.runelite.api.Client;
+import net.runelite.api.widgets.Widget;
+import net.runelite.api.widgets.WidgetInfo;
 
 
 class TargetArrowOverlay extends Overlay
@@ -50,7 +52,7 @@ class TargetArrowOverlay extends Overlay
 	private TargetArrowOverlay(Client client, MapTargetPlugin plugin)
 	{
 		super(plugin);
-		setPosition(OverlayPosition.TOP_LEFT);
+		setPosition(OverlayPosition.DYNAMIC);
 		setPriority(OverlayPriority.HIGHEST);
     this.client = client;
 		this.plugin = plugin;
@@ -90,20 +92,13 @@ class TargetArrowOverlay extends Overlay
       else if (dx > 0 && dy < 0) {
         angle = 2.0*Math.PI - angle;
       }
-      BufferedImage rotatedImage = ImageUtil.rotateImage(ARROW_ICON, 2.0*Math.PI-angle);
-      graphics.drawImage(rotatedImage, 100, 100, null);
-    }
-    /*Widget minimap = client.getWidget(WidgetInfo.MINIMAP_WORLDMAP_ORB);
 
-		if (minimap != null) {
-			Widget[] children = minimap.getChildren();
-			if (children == null) {
-				System.out.println("no children");
-			}
-			else {
-				System.out.println("child count: " + children.length);
-			}
-		}*/
+      double clientAngle = (client.getMapAngle() / 2048.0) * 2.0*Math.PI;
+      angle -= clientAngle;
+
+      BufferedImage rotatedImage = ImageUtil.rotateImage(ARROW_ICON, 2.0*Math.PI-angle);
+      graphics.drawImage(rotatedImage, 10, 10, null);
+    }
 
     return null;
 	}
