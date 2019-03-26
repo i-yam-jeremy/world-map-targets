@@ -111,7 +111,7 @@ public class MapTargetPlugin extends Plugin implements MouseListener
 	static {
 		try {
 			MARKER_ICON = new BufferedImage(73, 73, BufferedImage.TYPE_INT_ARGB);
-			final BufferedImage markerIcon = ImageUtil.getResourceStreamFromClass(net.runelite.client.plugins.worldmap.WorldMapPlugin.class, "marker_blue.png");
+			final BufferedImage markerIcon = ImageUtil.getResourceStreamFromClass(ImageUtil.class, "/net/runelite/client/plugins/worldmaptargets/marker_blue.png");
 			//final BufferedImage markerIcon = ImageUtil.getResourceStreamFromClass(MapTargetPlugin.class, "marker_blue.png");
 			MARKER_ICON.getGraphics().drawImage(markerIcon, 1, 1, null);
 		} catch (Exception e) {
