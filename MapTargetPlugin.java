@@ -49,7 +49,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.client.plugins.maptargets;
+package net.runelite.client.plugins.worldmaptargets;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Provides;
@@ -95,6 +95,8 @@ import net.runelite.client.ui.overlay.worldmap.WorldMapPoint;
 import net.runelite.api.coords.WorldPoint;
 import java.awt.image.BufferedImage;
 import net.runelite.client.util.ImageUtil;
+import net.runelite.client.ui.overlay.OverlayManager;
+
 
 @PluginDescriptor(
 	name = "Map Targets",
@@ -106,18 +108,7 @@ public class MapTargetPlugin extends Plugin implements MouseListener
 
 	private static String MENUOP_SET_TARGET = "Set Target";
 
-	private static BufferedImage MARKER_ICON;
-
-	static {
-		try {
-			MARKER_ICON = new BufferedImage(73, 73, BufferedImage.TYPE_INT_ARGB);
-			final BufferedImage markerIcon = ImageUtil.getResourceStreamFromClass(ImageUtil.class, "/net/runelite/client/plugins/worldmaptargets/marker_blue.png");
-			//final BufferedImage markerIcon = ImageUtil.getResourceStreamFromClass(MapTargetPlugin.class, "marker_blue.png");
-			MARKER_ICON.getGraphics().drawImage(markerIcon, 1, 1, null);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+	private static BufferedImage MARKER_ICON = ImageUtil.getResourceStreamFromClass(ImageUtil.class, "/net/runelite/client/plugins/worldmaptargets/marker_blue.png");
 
 	@Inject
 	private Client client;
@@ -128,16 +119,28 @@ public class MapTargetPlugin extends Plugin implements MouseListener
 	@Inject
 	private WorldMapPointManager worldMapPointManager;
 
+	@Inject
+	private OverlayManager overlayManager;
+
+	@Inject
+	private TargetArrowOverlay targetArrowOverlay;
+
+	private WorldMapPoint currentDestination;
+
 	@Override
 	public void startUp()
 	{
+		currentDestination = null;
 		mouseManager.registerMouseListener(this);
+		overlayManager.add(targetArrowOverlay);
 	}
 
 	@Override
 	public void shutDown()
 	{
+		currentDestination = null;
 		mouseManager.unregisterMouseListener(this);
+		overlayManager.remove(targetArrowOverlay);
 	}
 
 	@Subscribe
@@ -191,6 +194,10 @@ public class MapTargetPlugin extends Plugin implements MouseListener
 		}*/
 	}
 
+	public WorldMapPoint getCurrentDestination() {
+		return currentDestination;
+	}
+
 	public MouseEvent mouseClicked(MouseEvent mouseEvent) {
 		return mouseEvent;
 	}
@@ -234,7 +241,11 @@ public class MapTargetPlugin extends Plugin implements MouseListener
 							WorldPoint destination = worldMapPoint.getWorldPoint().dx(worldDx).dy(worldDy);
 							System.out.println("(" + destination.getX() + ", " + destination.getY() + ")");
 
-							worldMapPointManager.add(new WorldMapPoint(destination, MARKER_ICON));
+							if (currentDestination != null) {
+								worldMapPointManager.remove(currentDestination);
+							}
+							currentDestination = new WorldMapPoint(destination, MARKER_ICON);
+							worldMapPointManager.add(currentDestination);
 							break;
 						}
 						/*System.out.println(worldMapPoint.getClickbox());
