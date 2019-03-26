@@ -90,6 +90,9 @@ import java.awt.event.MouseEvent;
 import javax.swing.SwingUtilities;
 import net.runelite.client.input.MouseListener;
 import net.runelite.client.input.MouseManager;
+import net.runelite.client.ui.overlay.worldmap.WorldMapPointManager;
+import net.runelite.client.ui.overlay.worldmap.WorldMapPoint;
+import net.runelite.api.coords.WorldPoint;
 
 @PluginDescriptor(
 	name = "Map Targets",
@@ -107,6 +110,9 @@ public class MapTargetPlugin extends Plugin implements MouseListener
 	@Inject
 	private MouseManager mouseManager;
 
+	@Inject
+	private WorldMapPointManager worldMapPointManager;
+
 	@Override
 	public void startUp()
 	{
@@ -116,7 +122,7 @@ public class MapTargetPlugin extends Plugin implements MouseListener
 	@Override
 	public void shutDown()
 	{
-
+		mouseManager.unregisterMouseListener(this);
 	}
 
 	@Subscribe
@@ -171,32 +177,81 @@ public class MapTargetPlugin extends Plugin implements MouseListener
 	}
 
 	public MouseEvent mouseClicked(MouseEvent mouseEvent) {
-		System.out.println(mouseEvent);
-		return null;
+		return mouseEvent;
 	}
 
 	public MouseEvent mousePressed(MouseEvent mouseEvent) {
-		return null;
+		Widget worldMap = client.getWidget(WidgetInfo.WORLD_MAP_VIEW);
+
+		if (worldMap != null) {
+			try {
+				java.lang.reflect.Method method = worldMapPointManager.getClass().getDeclaredMethod("getWorldMapPoints", new Class<?>[]{});
+				method.setAccessible(true);
+				java.util.List<WorldMapPoint> worldMapPoints = (java.util.List<WorldMapPoint>) method.invoke(worldMapPointManager, new Object[]{});
+
+				WorldMapPoint p1 = null;
+				WorldMapPoint p2 = null;
+				for (WorldMapPoint worldMapPoint : worldMapPoints) {
+					if (worldMapPoint.getClickbox() != null) {
+						if (p1 == null) {
+							p1 = worldMapPoint;
+						}
+						else {
+							p2 = worldMapPoint;
+							break;
+						}
+					}
+				}
+
+				double scale = (p1.getClickbox().getX() - p2.getClickbox().getX()) / (p1.getWorldPoint().getX() - p2.getWorldPoint().getX());
+				System.out.println("Scale: " + scale);
+
+				for (WorldMapPoint worldMapPoint : worldMapPoints) {
+					if (worldMapPoint.getClickbox() != null && worldMapPoint.getClickbox().getX() > 0 && worldMapPoint.getClickbox().getY() > 0) {
+						int mouseX = mouseEvent.getX();
+						int mouseY = mouseEvent.getY();
+						int mapPointScreenX = (int) worldMapPoint.getClickbox().getX();
+						int mapPointScreenY = (int) worldMapPoint.getClickbox().getY();
+						int screenDx = mouseX - mapPointScreenX;
+						int screenDy = mouseY - mapPointScreenY;
+						int worldDx = (int) (screenDx / scale);
+						int worldDy = (int) (-screenDy / scale);
+						WorldPoint destination = worldMapPoint.getWorldPoint().dx(worldDx).dy(worldDy);
+						System.out.println("(" + destination.getX() + ", " + destination.getY() + ")");
+						break;
+					}
+					/*System.out.println(worldMapPoint.getClickbox());
+					System.out.println(worldMapPoint.getWorldPoint().getX() + ", " + worldMapPoint.getWorldPoint().getY() + ", " + worldMapPoint.getWorldPoint().getPlane());*/
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			/*System.out.println("WORLD MAP BOUNDS: " + worldMap.getBounds());
+			System.out.println("(" + worldMap.getRelativeX() + ", " + worldMap.getRelativeY() + ")");
+			//System.out.println("scroll: (" + worldMap.getScrollX() + ", " + worldMap.getScrollY() + ")");*/
+		}
+
+		return mouseEvent;
 	}
 
 	public MouseEvent mouseReleased(MouseEvent mouseEvent) {
-		return null;
+		return mouseEvent;
 	}
 
 	public MouseEvent mouseEntered(MouseEvent mouseEvent) {
-		return null;
+		return mouseEvent;
 	}
 
 	public MouseEvent mouseExited(MouseEvent mouseEvent) {
-		return null;
+		return mouseEvent;
 	}
 
 	public MouseEvent mouseDragged(MouseEvent mouseEvent) {
-		return null;
+		return mouseEvent;
 	}
 
 	public MouseEvent mouseMoved(MouseEvent mouseEvent) {
-		return null;
+		return mouseEvent;
 	}
 
 }
