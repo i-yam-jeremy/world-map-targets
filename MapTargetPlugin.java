@@ -95,7 +95,6 @@ import net.runelite.client.ui.overlay.worldmap.WorldMapPoint;
 import net.runelite.api.coords.WorldPoint;
 import java.awt.image.BufferedImage;
 import net.runelite.client.util.ImageUtil;
-import javax.imageio.ImageIO;
 
 @PluginDescriptor(
 	name = "Map Targets",
@@ -111,11 +110,9 @@ public class MapTargetPlugin extends Plugin implements MouseListener
 
 	static {
 		try {
-			MARKER_ICON = new BufferedImage(36, 36, BufferedImage.TYPE_INT_ARGB);
-
-			java.io.InputStream is = MapTargetPlugin.class.getResourceAsStream("marker-blue.png");
-			System.out.println("INPUT STREAM: " + is);
-			final BufferedImage markerIcon = ImageIO.read(is);//ImageUtil.getResourceStreamFromClass(MapTargetPlugin.class, "marker-blue.png");
+			MARKER_ICON = new BufferedImage(73, 73, BufferedImage.TYPE_INT_ARGB);
+			final BufferedImage markerIcon = ImageUtil.getResourceStreamFromClass(net.runelite.client.plugins.worldmap.WorldMapPlugin.class, "marker_blue.png");
+			//final BufferedImage markerIcon = ImageUtil.getResourceStreamFromClass(MapTargetPlugin.class, "marker_blue.png");
 			MARKER_ICON.getGraphics().drawImage(markerIcon, 1, 1, null);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -199,7 +196,7 @@ public class MapTargetPlugin extends Plugin implements MouseListener
 	}
 
 	public MouseEvent mousePressed(MouseEvent mouseEvent) {
-		if (SwingUtilities.isRightMouseButton(mouseEvent)) {
+		//if (SwingUtilities.isRightMouseButton(mouseEvent)) {
 			Widget worldMap = client.getWidget(WidgetInfo.WORLD_MAP_VIEW);
 
 			if (worldMap != null) {
@@ -250,7 +247,7 @@ public class MapTargetPlugin extends Plugin implements MouseListener
 				System.out.println("(" + worldMap.getRelativeX() + ", " + worldMap.getRelativeY() + ")");
 				//System.out.println("scroll: (" + worldMap.getScrollX() + ", " + worldMap.getScrollY() + ")");*/
 			}
-		}
+		//}
 
 		return mouseEvent;
 	}
