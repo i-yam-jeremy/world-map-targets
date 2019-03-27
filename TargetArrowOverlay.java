@@ -38,10 +38,8 @@ import net.runelite.api.Client;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
 import net.runelite.client.ui.overlay.components.ImageComponent;
-import net.runelite.client.ui.overlay.components.LineComponent;
+import net.runelite.client.ui.overlay.components.TextComponent;
 import net.runelite.client.ui.overlay.components.PanelComponent;
-import net.runelite.client.ui.overlay.tooltip.Tooltip;
-import net.runelite.client.ui.overlay.tooltip.TooltipManager;
 
 
 class TargetArrowOverlay extends Overlay
@@ -53,18 +51,16 @@ class TargetArrowOverlay extends Overlay
 
 	private final MapTargetPlugin plugin;
 
-  private TooltipManager tooltipManager;
-
   private final PanelComponent panelComponent = new PanelComponent();
+  private final TextComponent textComponent = new TextComponent();
 
 	@Inject
-	private TargetArrowOverlay(Client client, MapTargetPlugin plugin, TooltipManager tooltipManager)
+	private TargetArrowOverlay(Client client, MapTargetPlugin plugin)
 	{
 		super(plugin);
-		setPosition(OverlayPosition.BOTTOM_LEFT);
+		setPosition(OverlayPosition.TOP_CENTER);
     this.client = client;
 		this.plugin = plugin;
-    this.tooltipManager = tooltipManager;
     panelComponent.setOrientation(PanelComponent.Orientation.HORIZONTAL);
 	}
 
@@ -111,16 +107,18 @@ class TargetArrowOverlay extends Overlay
 
       panelComponent.getChildren().clear();
       panelComponent.getChildren().add(new ImageComponent(finalImage));
+      Dimension panelDimensions = panelComponent.render(graphics);
 
-      /*int distanceToDestination = (int) Math.round(Math.sqrt(dx*dx + dy*dy));
-      if (panelComponent.getBounds().contains(plugin.getLastMousePosition())) {
-  			tooltipManager.addFront(new Tooltip("Distance - " + distanceToDestination));
-  		}
-  		else {
-  			tooltipManager.clear();
-  		}*/
+      int distanceToDestination = (int) Math.round(Math.sqrt(dx*dx + dy*dy));
+      textComponent.setText(Integer.toString(distanceToDestination));
+      textComponent.setPosition(new java.awt.Point(
+              (int)(panelComponent.getBounds().getX() + panelComponent.getBounds().getWidth()/2 - 10),
+              (int)(panelComponent.getBounds().getY() + panelComponent.getBounds().getHeight())
+              ));
+      textComponent.setColor(java.awt.Color.WHITE);
+      textComponent.render(graphics);
 
-      return panelComponent.render(graphics);
+      return panelDimensions;
     }
 
     return null;

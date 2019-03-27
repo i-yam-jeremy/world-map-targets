@@ -126,7 +126,6 @@ public class MapTargetPlugin extends Plugin implements MouseListener
 	private TargetArrowOverlay targetArrowOverlay;
 
 	private WorldMapPoint currentDestination;
-	private Point lastMousePosition;
 
 
 	@Override
@@ -198,10 +197,6 @@ public class MapTargetPlugin extends Plugin implements MouseListener
 
 	public WorldMapPoint getCurrentDestination() {
 		return currentDestination;
-	}
-
-	public Point getLastMousePosition() {
-		return lastMousePosition;
 	}
 
 	public MouseEvent mouseClicked(MouseEvent mouseEvent) {
@@ -286,7 +281,6 @@ public class MapTargetPlugin extends Plugin implements MouseListener
 	}
 
 	public MouseEvent mouseMoved(MouseEvent mouseEvent) {
-		lastMousePosition = mouseEvent.getPoint();
 		return mouseEvent;
 	}
 
