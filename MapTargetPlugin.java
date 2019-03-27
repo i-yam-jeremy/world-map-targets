@@ -210,7 +210,12 @@ public class MapTargetPlugin extends Plugin implements MouseListener
 	}
 
 	public MouseEvent mousePressed(MouseEvent mouseEvent) {
-		if (mouseEvent.isShiftDown()) {
+		if (mouseEvent.isAltDown() && currentDestination != null && currentDestination.getClickbox().contains(mouseEvent.getPoint())) {
+			worldMapPointManager.remove(currentDestination);
+			currentDestination = null;
+			return mouseEvent;
+		}
+		else if (mouseEvent.isShiftDown()) {
 			Widget worldMap = client.getWidget(WidgetInfo.WORLD_MAP_VIEW);
 
 			if (worldMap != null) {
