@@ -53,6 +53,7 @@ package net.runelite.client.plugins.worldmaptargets;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Provides;
+import java.awt.Point;
 import java.util.Set;
 import java.util.Arrays;
 import javax.inject.Inject;
@@ -97,7 +98,6 @@ import java.awt.image.BufferedImage;
 import net.runelite.client.util.ImageUtil;
 import net.runelite.client.ui.overlay.OverlayManager;
 
-
 @PluginDescriptor(
 	name = "Map Targets",
 	description = "Set destination targets on the world map to get a direction arrow",
@@ -126,6 +126,7 @@ public class MapTargetPlugin extends Plugin implements MouseListener
 	private TargetArrowOverlay targetArrowOverlay;
 
 	private WorldMapPoint currentDestination;
+	private Point lastMousePosition;
 
 
 	@Override
@@ -197,6 +198,10 @@ public class MapTargetPlugin extends Plugin implements MouseListener
 
 	public WorldMapPoint getCurrentDestination() {
 		return currentDestination;
+	}
+
+	public Point getLastMousePosition() {
+		return lastMousePosition;
 	}
 
 	public MouseEvent mouseClicked(MouseEvent mouseEvent) {
@@ -281,6 +286,7 @@ public class MapTargetPlugin extends Plugin implements MouseListener
 	}
 
 	public MouseEvent mouseMoved(MouseEvent mouseEvent) {
+		lastMousePosition = mouseEvent.getPoint();
 		return mouseEvent;
 	}
 

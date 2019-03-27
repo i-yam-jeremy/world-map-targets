@@ -37,6 +37,11 @@ import net.runelite.client.util.ImageUtil;
 import net.runelite.api.Client;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetInfo;
+import net.runelite.client.ui.overlay.components.ImageComponent;
+import net.runelite.client.ui.overlay.components.LineComponent;
+import net.runelite.client.ui.overlay.components.PanelComponent;
+import net.runelite.client.ui.overlay.tooltip.Tooltip;
+import net.runelite.client.ui.overlay.tooltip.TooltipManager;
 
 
 class TargetArrowOverlay extends Overlay
@@ -48,14 +53,19 @@ class TargetArrowOverlay extends Overlay
 
 	private final MapTargetPlugin plugin;
 
+  private TooltipManager tooltipManager;
+
+  private final PanelComponent panelComponent = new PanelComponent();
+
 	@Inject
-	private TargetArrowOverlay(Client client, MapTargetPlugin plugin)
+	private TargetArrowOverlay(Client client, MapTargetPlugin plugin, TooltipManager tooltipManager)
 	{
 		super(plugin);
-		setPosition(OverlayPosition.DYNAMIC);
-		setPriority(OverlayPriority.HIGHEST);
+		setPosition(OverlayPosition.BOTTOM_LEFT);
     this.client = client;
 		this.plugin = plugin;
+    this.tooltipManager = tooltipManager;
+    panelComponent.setOrientation(PanelComponent.Orientation.HORIZONTAL);
 	}
 
 	@Override
@@ -97,7 +107,20 @@ class TargetArrowOverlay extends Overlay
       angle -= clientAngle;
 
       BufferedImage rotatedImage = ImageUtil.rotateImage(ARROW_ICON, 2.0*Math.PI-angle);
-      graphics.drawImage(rotatedImage, 10, 10, null);
+      BufferedImage finalImage = rotatedImage.getSubimage(0, 0, 52, 52);
+
+      panelComponent.getChildren().clear();
+      panelComponent.getChildren().add(new ImageComponent(finalImage));
+
+      /*int distanceToDestination = (int) Math.round(Math.sqrt(dx*dx + dy*dy));
+      if (panelComponent.getBounds().contains(plugin.getLastMousePosition())) {
+  			tooltipManager.addFront(new Tooltip("Distance - " + distanceToDestination));
+  		}
+  		else {
+  			tooltipManager.clear();
+  		}*/
+
+      return panelComponent.render(graphics);
     }
 
     return null;
