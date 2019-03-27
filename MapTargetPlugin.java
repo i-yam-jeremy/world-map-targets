@@ -108,7 +108,13 @@ public class MapTargetPlugin extends Plugin implements MouseListener
 
 	private static String MENUOP_SET_TARGET = "Set Target";
 
-	private static BufferedImage MARKER_ICON = ImageUtil.getResourceStreamFromClass(ImageUtil.class, "/net/runelite/client/plugins/worldmaptargets/marker_blue.png");
+	private static BufferedImage MARKER_ICON;
+
+	static {
+		MARKER_ICON = new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage markerIcon = ImageUtil.getResourceStreamFromClass(ImageUtil.class, "/net/runelite/client/plugins/worldmaptargets/marker_blue.png");
+		MARKER_ICON.getGraphics().drawImage(markerIcon, 0, 0, null);
+	}
 
 	@Inject
 	private Client client;
@@ -240,7 +246,6 @@ public class MapTargetPlugin extends Plugin implements MouseListener
 							int worldDx = (int) (screenDx / scale);
 							int worldDy = (int) (-screenDy / scale);
 							WorldPoint destination = worldMapPoint.getWorldPoint().dx(worldDx).dy(worldDy);
-							System.out.println("(" + destination.getX() + ", " + destination.getY() + ")");
 
 							if (currentDestination != null) {
 								worldMapPointManager.remove(currentDestination);
